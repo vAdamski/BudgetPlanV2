@@ -1,0 +1,30 @@
+services:
+  budgetplan.api:
+    image: budgetplan.api
+    build:
+      context: .
+      dockerfile: BudgetPlan.Api/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      APPLICATION_DB_CONNECTION_STRING: Host=budgetplan.db;Port=5432;Database=budgetplan_application;Username=budgetplan;Password=budgetplan
+      IDENTITY_DB_CONNECTION_STRING: Host=budgetplan.db;Port=5432;Database=budgetplan_identity;Username=budgetplan;Password=budgetplan
+    ports:
+      - "8080:8080"
+    depends_on:
+      - budgetplan.db
+
+  budgetplan.db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: budgetplan_application
+      POSTGRES_USER: budgetplan
+      POSTGRES_PASSWORD: budgetplan
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+      - budgetplan-postgres:/var/lib/postgresql/data
+
+volumes:
+  budgetplan-postgres:

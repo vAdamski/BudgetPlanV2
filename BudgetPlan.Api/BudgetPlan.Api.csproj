@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MediatR" Version="14.1.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.1" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Include="..\.dockerignore">
+        <Link>.dockerignore</Link>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\BudgetPlan.Application\BudgetPlan.Application.csproj" />
+      <ProjectReference Include="..\BudgetPlan.Domain\BudgetPlan.Domain.csproj" />
+      <ProjectReference Include="..\BudgetPlan.Infrastructure\BudgetPlan.Infrastructure.csproj" />
+    </ItemGroup>
+
+</Project>
