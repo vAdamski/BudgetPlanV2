@@ -1,12 +1,12 @@
 using BudgetPlan.Application.Common.Interfaces.Persistence;
+using BudgetPlan.Application.Common.Interfaces.Persistence.Marten;
 using BudgetPlan.Domain.Entities;
 using BudgetPlan.Persistence.Health;
+using BudgetPlan.Persistence.Marten;
 using JasperFx;
 using JasperFx.Events;
 using Marten;
-using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +19,8 @@ public static class DependencyInjection
 	{
 		AddMarten(services, configuration);
 		AddIdentity(services, configuration);
+		
+		services.AddScoped<IAggregateRepository, AggregateRepository>();
 
 		return services;
 	}
@@ -92,14 +94,5 @@ public static class DependencyInjection
 			.AddEntityFrameworkStores<IdentityDbContext>()
 			.AddSignInManager()
 			.AddDefaultTokenProviders();
-	}
-}
-
-public class IdentityDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Guid>, Guid>
-{
-	public IdentityDbContext(
-		DbContextOptions<IdentityDbContext> options)
-		: base(options)
-	{
 	}
 }

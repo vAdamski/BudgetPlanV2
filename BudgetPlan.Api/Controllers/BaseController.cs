@@ -1,10 +1,12 @@
 using BudgetPlan.Domain.Common;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetPlan.Api.Controllers;
 
 [ApiController]
+[Authorize]
 public class BaseController : ControllerBase
 {
 	protected readonly ISender Sender;

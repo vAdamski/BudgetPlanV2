@@ -1,9 +1,11 @@
+using BudgetPlan.Application.Common.Interfaces.Persistence.Marten;
 using BudgetPlan.Domain.Aggregates;
 using Marten;
 
 namespace BudgetPlan.Persistence.Marten;
 
-public sealed class AggregateRepository
+public sealed class AggregateRepository : IAggregateRepository
+
 {
     private readonly IDocumentStore store;
 

@@ -8,7 +8,9 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="Google.Apis.Auth" Version="1.75.0" />
         <PackageReference Include="MediatR" Version="14.1.0" />
+        <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" Version="8.19.1" />
         <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
         <PackageReference Include="Serilog.Settings.Configuration" Version="10.0.1" />
         <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
@@ -26,6 +28,10 @@
       <ProjectReference Include="..\BudgetPlan.Application\BudgetPlan.Application.csproj" />
       <ProjectReference Include="..\BudgetPlan.Domain\BudgetPlan.Domain.csproj" />
       <ProjectReference Include="..\BudgetPlan.Infrastructure\BudgetPlan.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Authentication\" />
     </ItemGroup>
 
 </Project>
