@@ -12,4 +12,11 @@ public static class DomainErrors
 		public static Error InvalidOperation(string message) =>
 			new("General.InvalidOperation", message);
 	}
+	
+	public static class Category
+	{
+		public static Error InvalidUserId => new("Category.InvalidUserId", "The user ID is invalid.");
+		public static Error InvalidName => new("Category.InvalidName", "The category name is invalid.");
+		public static Error AlreadyExist => new("Category.AlreadyExist", "The category already exist.");
+	}
 }
