@@ -1,11 +1,13 @@
 using BudgetPlan.Application.Common.Interfaces.Persistence;
 using BudgetPlan.Application.Common.Interfaces.Persistence.Marten;
 using BudgetPlan.Domain.Entities;
+using BudgetPlan.Persistence.Factories;
 using BudgetPlan.Persistence.Health;
 using BudgetPlan.Persistence.Marten;
 using JasperFx;
 using JasperFx.Events;
 using Marten;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -73,13 +75,13 @@ public static class DependencyInjection
 		services.AddDataProtection();
 		
 		services
-			.AddIdentityCore<ApplicationUser>(options =>
+			.AddIdentityApiEndpoints<ApplicationUser>(options =>
 			{
 				options.User.RequireUniqueEmail = true;
 
 				options.SignIn.RequireConfirmedEmail = true;
 
-				options.Password.RequiredLength = 10;
+				options.Password.RequiredLength = 8;
 				options.Password.RequireDigit = true;
 				options.Password.RequireLowercase = true;
 				options.Password.RequireUppercase = true;
@@ -92,7 +94,6 @@ public static class DependencyInjection
 			})
 			.AddRoles<IdentityRole<Guid>>()
 			.AddEntityFrameworkStores<IdentityDbContext>()
-			.AddSignInManager()
-			.AddDefaultTokenProviders();
+			.AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>();
 	}
 }

@@ -5,8 +5,8 @@ public static class EndpointsBlocker
     /// <summary>
     /// Blocks specified endpoints by returning a 404 Not Found response for matching requests.
     /// </summary>
-    /// <param name="app">The <see cref="IApplicationBuilder"/> instance.</param>
-    /// <param name="blockedEndpoints">A list of <see cref="BlockedEndpoint"/> objects representing the endpoints to block.</param>
+    /// <param name="app">The <see cref="blockedEndpoints"/> instance.</param>
+    /// <param name="blockedEndpoints">A list of <see cref="IApplicationBuilder"/> objects representing the endpoints to block.</param>
     /// <returns>The <see cref="IApplicationBuilder"/> instance.</returns>
     public static IApplicationBuilder BockEndpoints(this IApplicationBuilder app, List<BlockedEndpoint> blockedEndpoints)
     {
