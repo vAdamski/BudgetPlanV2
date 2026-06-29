@@ -16,6 +16,8 @@ public static class DependencyInjection
 		
 		services.AddScoped<IAggregateRepository, AggregateRepository>();
 		services.AddScoped<ICategoryReadRepository, CategoryReadRepository>();
+		services.AddScoped<ISettlementPeriodReadRepository, SettlementPeriodReadRepository>();
+		services.AddScoped<IFinancialEntryReadRepository, FinancialEntryReadRepository>();
 
 		return services;
 	}

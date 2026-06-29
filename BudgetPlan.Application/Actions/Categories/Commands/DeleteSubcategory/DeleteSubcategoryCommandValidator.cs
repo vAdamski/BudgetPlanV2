@@ -6,6 +6,10 @@ public class DeleteSubcategoryCommandValidator : AbstractValidator<DeleteSubcate
 {
     public DeleteSubcategoryCommandValidator()
     {
-        RuleFor(x => x.Id).NotEmpty();
+        RuleFor(x => x.CategoryId)
+            .NotEmpty().WithMessage("Category Id is required.");
+
+        RuleFor(x => x.SubcategoryId)
+            .NotEmpty().WithMessage("Subcategory Id is required.");
     }
 }

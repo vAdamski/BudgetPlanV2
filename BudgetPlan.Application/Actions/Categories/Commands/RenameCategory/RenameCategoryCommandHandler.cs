@@ -13,7 +13,7 @@ public class RenameCategoryCommandHandler(
 {
     public async Task<Result<Guid>> Handle(RenameCategoryCommand request, CancellationToken cancellationToken)
     {
-        var category = await aggregateRepository.LoadAsync<Category>(request.Id, null, cancellationToken);
+        var category = await aggregateRepository.TryLoadAsync<Category>(request.Id, null, cancellationToken);
 
         if (category == null)
             return Result.Failure<Guid>(ApplicationErrors.Category.CategoryNotFound());

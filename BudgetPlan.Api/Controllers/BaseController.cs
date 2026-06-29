@@ -25,11 +25,32 @@ public class BaseController : ControllerBase
 						result.Error,
 						validationResult.Errors)),
 			_ =>
-				BadRequest(
+				StatusCode(
+					GetStatusCode(result.Error),
 					CreateProblemDetails(
-						"Bad Request",
-						StatusCodes.Status400BadRequest,
+						GetTitle(result.Error),
+						GetStatusCode(result.Error),
 						result.Error))
+		};
+
+	private static int GetStatusCode(Error error)
+	{
+		if (error.Code.EndsWith("NotFound", StringComparison.Ordinal) ||
+		    error.Code == "General.NotFound")
+			return StatusCodes.Status404NotFound;
+
+		if (error.Code.EndsWith("AccessDenied", StringComparison.Ordinal))
+			return StatusCodes.Status403Forbidden;
+
+		return StatusCodes.Status400BadRequest;
+	}
+
+	private static string GetTitle(Error error) =>
+		GetStatusCode(error) switch
+		{
+			StatusCodes.Status404NotFound => "Not Found",
+			StatusCodes.Status403Forbidden => "Forbidden",
+			_ => "Bad Request"
 		};
 
 	private static ProblemDetails CreateProblemDetails(

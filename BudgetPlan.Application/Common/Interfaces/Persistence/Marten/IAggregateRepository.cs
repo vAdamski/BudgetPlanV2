@@ -11,4 +11,10 @@ public interface IAggregateRepository
         int? version = null,
         CancellationToken ct = default
     ) where T : AggregateBase;
+
+    Task<T?> TryLoadAsync<T>(
+        Guid id,
+        int? version = null,
+        CancellationToken ct = default
+    ) where T : AggregateBase;
 }

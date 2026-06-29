@@ -13,7 +13,7 @@ public class DeleteSubcategoryCommandHandler(
 {
     public async Task<Result> Handle(DeleteSubcategoryCommand request, CancellationToken cancellationToken)
     {
-        var category = await aggregateRepository.LoadAsync<Category>(request.Id, null, cancellationToken);
+        var category = await aggregateRepository.TryLoadAsync<Category>(request.CategoryId, null, cancellationToken);
 
         if (category == null)
             return Result.Failure(ApplicationErrors.Category.CategoryNotFound());
@@ -21,7 +21,7 @@ public class DeleteSubcategoryCommandHandler(
         if (category.UserId != currentUserService.UserId)
             return Result.Failure(ApplicationErrors.Category.CategoryAccessDenied());
 
-        var deleteResult = category.ArchiveSubcategory(request.Id);
+        var deleteResult = category.ArchiveSubcategory(request.SubcategoryId);
 
         if (deleteResult.IsFailure)
             return Result.Failure(deleteResult.Error);

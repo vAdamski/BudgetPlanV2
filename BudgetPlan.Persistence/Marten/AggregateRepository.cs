@@ -24,8 +24,17 @@ public sealed class AggregateRepository(IDocumentStore store) : IAggregateReposi
         CancellationToken ct = default
     ) where T : AggregateBase
     {
-        await using var session = await store.LightweightSerializableSessionAsync(token: ct);
-        var aggregate = await session.Events.AggregateStreamAsync<T>(id, version ?? 0, token: ct);
+        var aggregate = await TryLoadAsync<T>(id, version, ct);
         return aggregate ?? throw new InvalidOperationException($"No aggregate by id {id}.");
+    }
+
+    public async Task<T?> TryLoadAsync<T>(
+        Guid id,
+        int? version = null,
+        CancellationToken ct = default
+    ) where T : AggregateBase
+    {
+        await using var session = await store.LightweightSerializableSessionAsync(token: ct);
+        return await session.Events.AggregateStreamAsync<T>(id, version ?? 0, token: ct);
     }
 }

@@ -148,12 +148,12 @@ public class Category : AggregateBase
     
     public void Apply(CategoryEvents.SubcategoryRenamed @event)
     {
-        var subcategory = Subcategories.FirstOrDefault(x => x.Id == @event.SubcategoryId);
+        var subcategoryIndex = Subcategories.FindIndex(x => x.Id == @event.SubcategoryId);
         
-        if (subcategory == null)
+        if (subcategoryIndex < 0)
             return;
         
-        subcategory = subcategory with
+        Subcategories[subcategoryIndex] = Subcategories[subcategoryIndex] with
         {
             Name = @event.Name
         };
@@ -163,12 +163,12 @@ public class Category : AggregateBase
 
     public void Apply(CategoryEvents.SubcategoryArchived @event)
     {
-        var subcategory = Subcategories.FirstOrDefault(x => x.Id == @event.SubcategoryId);
+        var subcategoryIndex = Subcategories.FindIndex(x => x.Id == @event.SubcategoryId);
         
-        if (subcategory == null)
+        if (subcategoryIndex < 0)
             return;
 
-        subcategory = subcategory with
+        Subcategories[subcategoryIndex] = Subcategories[subcategoryIndex] with
         {
             IsArchived = true
         };

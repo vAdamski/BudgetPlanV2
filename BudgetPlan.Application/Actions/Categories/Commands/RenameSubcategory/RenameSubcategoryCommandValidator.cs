@@ -6,7 +6,10 @@ public class RenameSubcategoryCommandValidator : AbstractValidator<RenameSubcate
 {
     public RenameSubcategoryCommandValidator()
     {
-        RuleFor(x => x.Id)
+        RuleFor(x => x.CategoryId)
+            .NotEmpty().WithMessage("Category Id is required.");
+
+        RuleFor(x => x.SubcategoryId)
             .NotEmpty().WithMessage("Subcategory Id is required.");
 
         RuleFor(x => x.Name)

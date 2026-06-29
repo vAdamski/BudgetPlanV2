@@ -24,4 +24,22 @@ public static class ApplicationErrors
         public static Error CategoryAccessDenied() =>
             new("Category.CategoryAccessDenied", "You do not have permission to access this category.");
     }
+
+    public static class SettlementPeriod
+    {
+        public static Error SettlementPeriodNotFound() =>
+            new("SettlementPeriod.SettlementPeriodNotFound", "The settlement period was not found.");
+
+        public static Error SettlementPeriodAccessDenied() =>
+            new("SettlementPeriod.SettlementPeriodAccessDenied", "You do not have permission to access this settlement period.");
+    }
+
+    public static class FinancialEntry
+    {
+        public static Error FinancialEntryNotFound() =>
+            new("FinancialEntry.FinancialEntryNotFound", "The financial entry was not found.");
+
+        public static Error FinancialEntryAccessDenied() =>
+            new("FinancialEntry.FinancialEntryAccessDenied", "You do not have permission to access this financial entry.");
+    }
 }

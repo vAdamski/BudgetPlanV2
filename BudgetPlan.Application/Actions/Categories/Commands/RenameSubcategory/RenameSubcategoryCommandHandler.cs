@@ -13,7 +13,7 @@ public class RenameSubcategoryCommandHandler(
 {
     public async Task<Result<Guid>> Handle(RenameSubcategoryCommand request, CancellationToken cancellationToken)
     {
-        var category = await aggregateRepository.LoadAsync<Category>(request.Id, null, cancellationToken);
+        var category = await aggregateRepository.TryLoadAsync<Category>(request.CategoryId, null, cancellationToken);
 
         if (category == null)
             return Result.Failure<Guid>(ApplicationErrors.Category.CategoryNotFound());
@@ -21,13 +21,13 @@ public class RenameSubcategoryCommandHandler(
         if (category.UserId != currentUserService.UserId)
             return Result.Failure<Guid>(ApplicationErrors.Category.CategoryAccessDenied());
 
-        var renameResult = category.RenameSubcategory(request.Id, request.Name);
+        var renameResult = category.RenameSubcategory(request.SubcategoryId, request.Name);
 
         if (renameResult.IsFailure)
             return Result.Failure<Guid>(renameResult.Error);
 
         await aggregateRepository.StoreAsync(category, cancellationToken);
 
-        return Result.Success(request.Id);
+        return Result.Success(request.SubcategoryId);
     }
 }

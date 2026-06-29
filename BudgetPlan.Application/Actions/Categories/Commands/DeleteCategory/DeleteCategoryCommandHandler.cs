@@ -14,18 +14,18 @@ public class DeleteCategoryCommandHandler(
 {
     public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
-        var category = await aggregateRepository.LoadAsync<Category>(request.Id, null, cancellationToken);
+        var category = await aggregateRepository.TryLoadAsync<Category>(request.Id, null, cancellationToken);
 
         if (category == null)
-            return Result.Failure<Guid>(ApplicationErrors.Category.CategoryNotFound());
+            return Result.Failure(ApplicationErrors.Category.CategoryNotFound());
 
         if (category.UserId != currentUserService.UserId)
-            return Result.Failure<Guid>(ApplicationErrors.Category.CategoryAccessDenied());
+            return Result.Failure(ApplicationErrors.Category.CategoryAccessDenied());
 
         var deleteResult = category.Archive();
 
         if (deleteResult.IsFailure)
-            return Result.Failure<Guid>(deleteResult.Error);
+            return Result.Failure(deleteResult.Error);
 
         await aggregateRepository.StoreAsync(category, cancellationToken);
 
