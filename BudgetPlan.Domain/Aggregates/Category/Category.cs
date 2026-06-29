@@ -16,7 +16,7 @@ public class Category : AggregateBase
 
     public List<Subcategory> Subcategories { get; private set; } = [];
     
-    private Category()
+    public Category()
     {
     }
 
@@ -30,7 +30,7 @@ public class Category : AggregateBase
             
         var category = new Category();
         
-        var categoryCreated = new CategoryEvents.CategoryCreated(category.Id, userId, name, type);
+        var categoryCreated = new CategoryEvents.CategoryCreated(Guid.CreateVersion7(), userId, name, type);
         
         category.Apply(categoryCreated);
         category.AddUncommittedEvent(categoryCreated);
@@ -54,20 +54,20 @@ public class Category : AggregateBase
         return Result.Success();
     }
 
-    public Result AddSubcategory(string name)
+    public Result<Guid> AddSubcategory(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
-            return Result.Failure<Category>(DomainErrors.Category.InvalidName);
+            return Result.Failure<Guid>(DomainErrors.Category.InvalidName);
         
         if (Subcategories.Any(x => x.Name == name))
-            return Result.Failure<Category>(DomainErrors.Category.AlreadyExist);
+            return Result.Failure<Guid>(DomainErrors.Category.AlreadyExist);
         
         var subcategoryAdded = new CategoryEvents.SubcategoryAdded(Id, UserId, Guid.CreateVersion7(), name);
         
         Apply(subcategoryAdded);
         AddUncommittedEvent(subcategoryAdded);
         
-        return Result.Success();
+        return Result.Success(subcategoryAdded.SubcategoryId);
     }
 
     public Result RenameSubcategory(Guid subcategoryId, string newName)
@@ -122,7 +122,7 @@ public class Category : AggregateBase
         return Result.Success();
     }
     
-    private void Apply(CategoryEvents.CategoryCreated @event)
+    public void Apply(CategoryEvents.CategoryCreated @event)
     {
         Id = @event.CategoryId;
         UserId = @event.UserId;
@@ -132,21 +132,21 @@ public class Category : AggregateBase
         Version++;
     }
     
-    private void Apply(CategoryEvents.CategoryRenamed @event)
+    public void Apply(CategoryEvents.CategoryRenamed @event)
     {
         Name = @event.Name;
         
         Version++;
     }
     
-    private void Apply(CategoryEvents.SubcategoryAdded @event)
+    public void Apply(CategoryEvents.SubcategoryAdded @event)
     {
         Subcategories.Add(new Subcategory(@event.SubcategoryId, @event.Name, false));
         
         Version++;
     }
     
-    private void Apply(CategoryEvents.SubcategoryRenamed @event)
+    public void Apply(CategoryEvents.SubcategoryRenamed @event)
     {
         var subcategory = Subcategories.FirstOrDefault(x => x.Id == @event.SubcategoryId);
         
@@ -161,7 +161,7 @@ public class Category : AggregateBase
         Version++;
     }
 
-    private void Apply(CategoryEvents.SubcategoryArchived @event)
+    public void Apply(CategoryEvents.SubcategoryArchived @event)
     {
         var subcategory = Subcategories.FirstOrDefault(x => x.Id == @event.SubcategoryId);
         
@@ -176,7 +176,7 @@ public class Category : AggregateBase
         Version++;
     }
 
-    private void Apply(CategoryEvents.CategoryArchived @event)
+    public void Apply(CategoryEvents.CategoryArchived @event)
     {
         IsArchived = true;
         

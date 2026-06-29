@@ -4,16 +4,9 @@ using Marten;
 
 namespace BudgetPlan.Persistence.Marten;
 
-public sealed class AggregateRepository : IAggregateRepository
+public sealed class AggregateRepository(IDocumentStore store) : IAggregateRepository
 
 {
-    private readonly IDocumentStore store;
-
-    public AggregateRepository(IDocumentStore store)
-    {
-        this.store = store;
-    }
-
     public async Task StoreAsync(AggregateBase aggregate, CancellationToken ct = default)
     {
         await using var session = await store.LightweightSerializableSessionAsync(token: ct);
