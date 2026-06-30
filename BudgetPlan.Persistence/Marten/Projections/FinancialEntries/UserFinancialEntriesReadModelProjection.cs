@@ -1,92 +1,44 @@
+using BudgetPlan.Domain.Enums;
 using BudgetPlan.Domain.Events;
+using Marten.Events.Aggregation;
 using Marten.Events.Projections;
 
 namespace BudgetPlan.Persistence.Marten.Projections.FinancialEntries;
 
 public sealed partial class UserFinancialEntriesReadModelProjection
-    : MultiStreamProjection<UserFinancialEntriesReadModel, Guid>
+    : SingleStreamProjection<UserFinancialEntriesReadModel, Guid>
 {
-    public UserFinancialEntriesReadModelProjection()
+    public static UserFinancialEntriesReadModel Create(FinancialEntryEvents.FinancialEntryCreated @event)
     {
-        Identity<IUserId>(x => x.UserId);
-    }
-
-    public UserFinancialEntriesReadModel Create(UserAccountEvents.UserAccountCreated @event)
-    {
-        return new UserFinancialEntriesReadModel
-        {
-            Id = @event.UserId,
-            FinancialEntries = []
-        };
-    }
-
-    public UserFinancialEntriesReadModel Create(
-        FinancialEntryEvents.FinancialEntryCreated @event)
-    {
-        return new UserFinancialEntriesReadModel
-        {
-            Id = @event.UserId,
-            FinancialEntries =
-            [
-                ToReadModelItem(@event)
-            ]
-        };
-    }
-
-    public void Apply(
-        FinancialEntryEvents.FinancialEntryCreated @event,
-        UserFinancialEntriesReadModel model)
-    {
-        if (model.FinancialEntries.Any(x => x.Id == @event.FinancialEntryId))
-            return;
-
-        model.FinancialEntries.Add(ToReadModelItem(@event));
-    }
-
-    public void Apply(
-        FinancialEntryEvents.FinancialEntryUpdated @event,
-        UserFinancialEntriesReadModel model)
-    {
-        var financialEntry = model.FinancialEntries
-            .FirstOrDefault(x => x.Id == @event.FinancialEntryId);
-
-        if (financialEntry is null)
-            return;
-
-        financialEntry.CategoryId = @event.CategoryId;
-        financialEntry.SubcategoryId = @event.SubcategoryId;
-        financialEntry.Type = @event.Type;
-        financialEntry.Amount = @event.Amount;
-        financialEntry.OccurredOn = @event.OccurredOn;
-    }
-
-    public void Apply(
-        FinancialEntryEvents.FinancialEntryDeleted @event,
-        UserFinancialEntriesReadModel model)
-    {
-        var financialEntry = model.FinancialEntries
-            .FirstOrDefault(x => x.Id == @event.FinancialEntryId);
-
-        if (financialEntry is null)
-            return;
-
-        financialEntry.IsDeleted = true;
-        financialEntry.DeletedAt = @event.DeletedAt;
-    }
-
-    private static FinancialEntryReadModelItem ToReadModelItem(
-        FinancialEntryEvents.FinancialEntryCreated @event)
-    {
-        return new FinancialEntryReadModelItem
+        UserFinancialEntriesReadModel model = new UserFinancialEntriesReadModel
         {
             Id = @event.FinancialEntryId,
+            UserId = @event.UserId,
             CategoryId = @event.CategoryId,
             SubcategoryId = @event.SubcategoryId,
             Type = @event.Type,
             Amount = @event.Amount,
             OccurredOn = @event.OccurredOn,
-            IsDeleted = false,
-            DeletedAt = null
+            IsDeleted = false
         };
+        
+        return model;
+    }
+    
+    public void Update(FinancialEntryEvents.FinancialEntryUpdated @event,UserFinancialEntriesReadModel model)
+    {
+        model.Id = @event.FinancialEntryId;
+        model.UserId = @event.UserId;
+        model.CategoryId = @event.CategoryId;
+        model.SubcategoryId = @event.SubcategoryId;
+        model.Type = @event.Type;
+        model.Amount = @event.Amount;
+        model.OccurredOn = @event.OccurredOn;
+    }
+    
+    public void Delete(FinancialEntryEvents.FinancialEntryDeleted @event, UserFinancialEntriesReadModel model)
+    {
+        model.IsDeleted = true;
+        model.DeletedAt = @event.DeletedAt;
     }
 }

@@ -18,14 +18,14 @@ public sealed class FinancialEntryReadRepository(IDocumentStore store) : IFinanc
         CancellationToken cancellationToken)
     {
         await using var session = store.QuerySession();
-        var readModel = await session.Query<UserFinancialEntriesReadModel>()
-            .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
+        var financialEntries = await session.Query<UserFinancialEntriesReadModel>()
+            .Where(x => x.UserId == userId && !x.IsDeleted)
+            .ToListAsync(cancellationToken);
 
-        if (readModel is null)
+        if (!financialEntries.Any())
             return [];
 
-        var query = readModel.FinancialEntries
-            .Where(x => !x.IsDeleted);
+        var query = financialEntries.AsQueryable();
 
         if (occurredFrom.HasValue)
             query = query.Where(x => x.OccurredOn >= occurredFrom.Value);
@@ -55,16 +55,17 @@ public sealed class FinancialEntryReadRepository(IDocumentStore store) : IFinanc
         CancellationToken cancellationToken)
     {
         await using var session = store.QuerySession();
-        var readModel = await session.Query<UserFinancialEntriesReadModel>()
-            .FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
-
-        var financialEntry = readModel?.FinancialEntries
-            .FirstOrDefault(x => x.Id == financialEntryId && !x.IsDeleted);
+        var financialEntry = await session.Query<UserFinancialEntriesReadModel>()
+            .FirstOrDefaultAsync(x => 
+                    x.Id == userId &&
+                    !x.IsDeleted &&
+                    x.Id == financialEntryId
+                , cancellationToken);
 
         return financialEntry is null ? null : ToListItem(financialEntry);
     }
 
-    private static FinancialEntryListItem ToListItem(FinancialEntryReadModelItem item)
+    private static FinancialEntryListItem ToListItem(UserFinancialEntriesReadModel item)
     {
         return new FinancialEntryListItem
         {
