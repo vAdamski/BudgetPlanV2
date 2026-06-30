@@ -26,6 +26,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\BudgetPlan.Application\BudgetPlan.Application.csproj" />
+      <ProjectReference Include="..\BudgetPlan.Contracts\BudgetPlan.Contracts.csproj" />
       <ProjectReference Include="..\BudgetPlan.Persistence\BudgetPlan.Persistence.csproj" />
     </ItemGroup>
 
