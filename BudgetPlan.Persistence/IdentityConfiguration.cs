@@ -3,6 +3,7 @@ using BudgetPlan.Domain.Entities;
 using BudgetPlan.Persistence.Factories;
 using BudgetPlan.Persistence.Health;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -57,5 +58,13 @@ public static class IdentityConfiguration
             .AddClaimsPrincipalFactory<ApplicationUserClaimsPrincipalFactory>();
         
         return services;
+    }
+    
+    public static IEndpointRouteBuilder MapApplicationIdentityApi(
+        this IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapIdentityApi<ApplicationUser>();
+
+        return endpoints;
     }
 }

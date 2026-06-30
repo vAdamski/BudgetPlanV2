@@ -18,4 +18,12 @@
         <Using Include="Xunit"/>
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\BudgetPlan.Api\BudgetPlan.Api.csproj" />
+      <ProjectReference Include="..\BudgetPlan.Application\BudgetPlan.Application.csproj" />
+      <ProjectReference Include="..\BudgetPlan.Contracts\BudgetPlan.Contracts.csproj" />
+      <ProjectReference Include="..\BudgetPlan.Domain\BudgetPlan.Domain.csproj" />
+      <ProjectReference Include="..\BudgetPlan.Frontend\BudgetPlan.Frontend.csproj" />
+    </ItemGroup>
+
 </Project>
