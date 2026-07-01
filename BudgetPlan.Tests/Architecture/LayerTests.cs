@@ -3,7 +3,6 @@ using BudgetPlan.Api;
 using BudgetPlan.Application;
 using BudgetPlan.Contracts;
 using BudgetPlan.Domain;
-using BudgetPlan.Frontend;
 using BudgetPlan.Persistence;
 
 namespace BudgetPlan.Tests.Architecture;
@@ -29,9 +28,6 @@ public class LayerTests
     private static readonly Assembly ApiAssembly =
         typeof(ApiReference).Assembly;
 
-    private static readonly Assembly BlazorAssembly =
-        typeof(BlazorReference).Assembly;
-
     private static readonly IReadOnlyDictionary<string, Assembly> ProjectAssemblies =
         new Dictionary<string, Assembly>
         {
@@ -40,7 +36,6 @@ public class LayerTests
             [GetAssemblyName(PersistenceAssembly)] = PersistenceAssembly,
             [GetAssemblyName(ContractsAssembly)] = ContractsAssembly,
             [GetAssemblyName(ApiAssembly)] = ApiAssembly,
-            [GetAssemblyName(BlazorAssembly)] = BlazorAssembly
         };
 
     public static TheoryData<string, string[]> AllowedDependencies =>
@@ -74,12 +69,6 @@ public class LayerTests
                     GetAssemblyName(PersistenceAssembly),
                     GetAssemblyName(ContractsAssembly),
                     GetAssemblyName(DomainAssembly)
-                ]
-            },
-            {
-                GetAssemblyName(BlazorAssembly),
-                [
-                    GetAssemblyName(ContractsAssembly)
                 ]
             }
         };
