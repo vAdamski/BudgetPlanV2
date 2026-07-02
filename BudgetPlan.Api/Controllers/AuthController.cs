@@ -2,8 +2,10 @@ using BudgetPlan.Api.Common.ContractMappers.Auth;
 using BudgetPlan.Application.Actions.UserAccountManager.Register;
 using BudgetPlan.Application.Common.Interfaces.Api.Services;
 using BudgetPlan.Contracts.ControllerContracts.Auth;
+using BudgetPlan.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BudgetPlan.Api.Controllers;
@@ -19,13 +21,24 @@ public sealed class AuthController(
 {
     [HttpGet("me")]
     [Authorize]
-    public async Task<IActionResult> GetCurrentUser()
+    [ProducesResponseType<CurrentUserResponse>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    public async Task<IActionResult> Me([FromServices] UserManager<ApplicationUser> userManager)
     {
-        var userId = currentUserService.UserId;
-        var email = currentUserService.Email;
-        var displayName = currentUserService.DisplayName;
+        var applicationUser =
+            await userManager.GetUserAsync(User);
 
-        return Ok(new { userId, email, displayName });
+        if (applicationUser is null)
+            return Unauthorized();
+
+        var roles =
+            await userManager.GetRolesAsync(applicationUser);
+
+        return Ok(new CurrentUserResponse(
+            applicationUser.Id,
+            applicationUser.Email!,
+            applicationUser.DisplayName,
+            roles.ToArray()));
     }
 
     [HttpPost("register")]
@@ -43,5 +56,16 @@ public sealed class AuthController(
             return HandleFailure(result);
 
         return Ok(result.Value.ToResponse());
+    }
+    
+    [HttpPost("logout")]
+    [Authorize]
+    public async Task<IActionResult> Logout(
+        [FromServices]
+        SignInManager<ApplicationUser> signInManager)
+    {
+        await signInManager.SignOutAsync();
+
+        return NoContent();
     }
 }

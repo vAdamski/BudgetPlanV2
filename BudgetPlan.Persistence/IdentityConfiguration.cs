@@ -2,6 +2,7 @@ using BudgetPlan.Application.Common.Interfaces.Persistence;
 using BudgetPlan.Domain.Entities;
 using BudgetPlan.Persistence.Factories;
 using BudgetPlan.Persistence.Health;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
@@ -63,7 +64,9 @@ public static class IdentityConfiguration
     public static IEndpointRouteBuilder MapApplicationIdentityApi(
         this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapIdentityApi<ApplicationUser>();
+        endpoints
+            .MapGroup("/identity")
+            .MapIdentityApi<ApplicationUser>();
 
         return endpoints;
     }
