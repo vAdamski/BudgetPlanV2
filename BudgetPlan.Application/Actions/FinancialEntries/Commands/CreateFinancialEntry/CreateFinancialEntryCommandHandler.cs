@@ -11,9 +11,11 @@ namespace BudgetPlan.Application.Actions.FinancialEntries.Commands.CreateFinanci
 public sealed class CreateFinancialEntryCommandHandler(
     ICurrentUserService currentUserService,
     IAggregateRepository aggregateRepository)
-    : ICommandHandler<CreateFinancialEntryCommand, Guid>
+    : ICommandHandler<CreateFinancialEntryCommand, CreateFinancialEntryResult>
 {
-    public async Task<Result<Guid>> Handle(CreateFinancialEntryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CreateFinancialEntryResult>> Handle(
+        CreateFinancialEntryCommand request,
+        CancellationToken cancellationToken)
     {
         var categoryResult = await GetActiveCategoryAsync(
             request.CategoryId,
@@ -21,7 +23,7 @@ public sealed class CreateFinancialEntryCommandHandler(
             cancellationToken);
 
         if (categoryResult.IsFailure)
-            return Result.Failure<Guid>(categoryResult.Error);
+            return Result.Failure<CreateFinancialEntryResult>(categoryResult.Error);
 
         var category = categoryResult.Value;
 
@@ -34,11 +36,11 @@ public sealed class CreateFinancialEntryCommandHandler(
             request.OccurredOn);
 
         if (financialEntry.IsFailure)
-            return Result.Failure<Guid>(financialEntry.Error);
+            return Result.Failure<CreateFinancialEntryResult>(financialEntry.Error);
 
         await aggregateRepository.StoreAsync(financialEntry.Value, cancellationToken);
 
-        return Result.Success(financialEntry.Value.Id);
+        return Result.Success(new CreateFinancialEntryResult(financialEntry.Value.Id));
     }
 
     private async Task<Result<Category>> GetActiveCategoryAsync(

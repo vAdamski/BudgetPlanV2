@@ -1,0 +1,3 @@
+namespace BudgetPlan.Application.Actions.SettlementPeriods.Queries.GetSettlementPeriods;
+
+public sealed record GetSettlementPeriodsResult(IReadOnlyList<SettlementPeriodDto> SettlementPeriods);

@@ -8,9 +8,9 @@ namespace BudgetPlan.Application.Actions.FinancialEntries.Queries.GetFinancialEn
 public sealed class GetFinancialEntriesQueryHandler(
     IFinancialEntryReadRepository financialEntryReadRepository,
     ICurrentUserService currentUserService)
-    : IQueryHandler<GetFinancialEntriesQuery, GetFinancialEntriesResponse>
+    : IQueryHandler<GetFinancialEntriesQuery, GetFinancialEntriesResult>
 {
-    public async Task<Result<GetFinancialEntriesResponse>> Handle(
+    public async Task<Result<GetFinancialEntriesResult>> Handle(
         GetFinancialEntriesQuery request,
         CancellationToken cancellationToken)
     {
@@ -34,6 +34,6 @@ public sealed class GetFinancialEntriesQueryHandler(
                 x.IsDeleted))
             .ToList();
 
-        return Result.Success(new GetFinancialEntriesResponse(dtos));
+        return Result.Success(new GetFinancialEntriesResult(dtos));
     }
 }

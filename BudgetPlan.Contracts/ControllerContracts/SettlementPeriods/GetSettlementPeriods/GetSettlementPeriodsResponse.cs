@@ -1,0 +1,3 @@
+namespace BudgetPlan.Contracts.ControllerContracts.SettlementPeriods.GetSettlementPeriods;
+
+public sealed record GetSettlementPeriodsResponse(IReadOnlyList<SettlementPeriodResponse> SettlementPeriods);

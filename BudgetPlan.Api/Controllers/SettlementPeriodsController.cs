@@ -1,7 +1,10 @@
+using BudgetPlan.Api.Common.ContractMappers.SettlementPeriods;
 using BudgetPlan.Application.Actions.SettlementPeriods.Commands.CreateSettlementPeriod;
 using BudgetPlan.Application.Actions.SettlementPeriods.Commands.UpdateSettlementPeriod;
 using BudgetPlan.Application.Actions.SettlementPeriods.Queries.GetSettlementPeriod;
 using BudgetPlan.Application.Actions.SettlementPeriods.Queries.GetSettlementPeriods;
+using BudgetPlan.Contracts.ControllerContracts.SettlementPeriods.CreateSettlementPeriod;
+using BudgetPlan.Contracts.ControllerContracts.SettlementPeriods.UpdateSettlementPeriod;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,37 +17,38 @@ public sealed class SettlementPeriodsController(ISender sender) : BaseController
     public async Task<IActionResult> GetSettlementPeriods(CancellationToken cancellationToken)
     {
         var result = await Sender.Send(new GetSettlementPeriodsQuery(), cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : HandleFailure(result);
+        return result.IsSuccess ? Ok(result.Value.ToResponse()) : HandleFailure(result);
     }
 
     [HttpGet("{id:guid}")]
     public async Task<IActionResult> GetSettlementPeriod(Guid id, CancellationToken cancellationToken)
     {
         var result = await Sender.Send(new GetSettlementPeriodQuery(id), cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : HandleFailure(result);
+        return result.IsSuccess ? Ok(result.Value.ToResponse()) : HandleFailure(result);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateSettlementPeriod(
-        [FromBody] CreateSettlementPeriodCommand command,
+        [FromBody] CreateSettlementPeriodRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(command, cancellationToken);
+        var result = await Sender.Send(request.ToCommand(), cancellationToken);
 
-        return result.IsSuccess
-            ? CreatedAtAction(nameof(GetSettlementPeriod), new { id = result.Value }, result.Value)
-            : HandleFailure(result);
+        if (!result.IsSuccess)
+            return HandleFailure(result);
+
+        var response = result.Value.ToResponse();
+
+        return CreatedAtAction(nameof(GetSettlementPeriod), new { id = response.Id }, response);
     }
 
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> UpdateSettlementPeriod(
         Guid id,
-        [FromBody] UpdateSettlementPeriodCommand command,
+        [FromBody] UpdateSettlementPeriodRequest request,
         CancellationToken cancellationToken)
     {
-        command.Id = id;
-
-        var result = await Sender.Send(command, cancellationToken);
+        var result = await Sender.Send(request.ToCommand(id), cancellationToken);
         return result.IsSuccess ? NoContent() : HandleFailure(result);
     }
 }

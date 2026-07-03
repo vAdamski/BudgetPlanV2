@@ -9,9 +9,11 @@ namespace BudgetPlan.Application.Actions.SettlementPeriods.Commands.CreateSettle
 public sealed class CreateSettlementPeriodCommandHandler(
     ICurrentUserService currentUserService,
     IAggregateRepository aggregateRepository)
-    : ICommandHandler<CreateSettlementPeriodCommand, Guid>
+    : ICommandHandler<CreateSettlementPeriodCommand, CreateSettlementPeriodResult>
 {
-    public async Task<Result<Guid>> Handle(CreateSettlementPeriodCommand request, CancellationToken cancellationToken)
+    public async Task<Result<CreateSettlementPeriodResult>> Handle(
+        CreateSettlementPeriodCommand request,
+        CancellationToken cancellationToken)
     {
         var settlementPeriod = SettlementPeriod.Create(
             currentUserService.UserId,
@@ -21,10 +23,10 @@ public sealed class CreateSettlementPeriodCommandHandler(
             request.EndDate);
 
         if (settlementPeriod.IsFailure)
-            return Result.Failure<Guid>(settlementPeriod.Error);
+            return Result.Failure<CreateSettlementPeriodResult>(settlementPeriod.Error);
 
         await aggregateRepository.StoreAsync(settlementPeriod.Value, cancellationToken);
 
-        return Result.Success(settlementPeriod.Value.Id);
+        return Result.Success(new CreateSettlementPeriodResult(settlementPeriod.Value.Id));
     }
 }

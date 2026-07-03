@@ -1,3 +1,4 @@
+using BudgetPlan.Api.Common.ContractMappers.Health;
 using BudgetPlan.Application.Actions.HealthActions.Queries.CheckHealth;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -14,7 +15,7 @@ public sealed class HealthController(ISender sender) : BaseController(sender)
 	{
 		var result = await Sender.Send(new CheckHealthQuery(), cancellationToken);
 
-		return result.IsSuccess ? Ok(result.Value) : HandleFailure(result);
+		return result.IsSuccess ? Ok(result.Value.ToResponse()) : HandleFailure(result);
 	}
 	
 	[HttpGet("authorized")]
@@ -22,6 +23,6 @@ public sealed class HealthController(ISender sender) : BaseController(sender)
 	{
 		var result = await Sender.Send(new CheckHealthQuery(), cancellationToken);
 
-		return result.IsSuccess ? Ok(result.Value) : HandleFailure(result);
+		return result.IsSuccess ? Ok(result.Value.ToResponse()) : HandleFailure(result);
 	}
 }

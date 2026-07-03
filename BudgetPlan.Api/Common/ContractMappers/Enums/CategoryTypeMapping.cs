@@ -11,4 +11,14 @@ internal static class CategoryTypeMapping
             _ => throw new ArgumentOutOfRangeException(nameof(categoryType), categoryType, null)
         };
     }
+
+    public static Contracts.Enums.CategoryType ToContract(this Domain.Enums.CategoryType categoryType)
+    {
+        return categoryType switch
+        {
+            Domain.Enums.CategoryType.Income => Contracts.Enums.CategoryType.Income,
+            Domain.Enums.CategoryType.Expense => Contracts.Enums.CategoryType.Expense,
+            _ => throw new ArgumentOutOfRangeException(nameof(categoryType), categoryType, null)
+        };
+    }
 }

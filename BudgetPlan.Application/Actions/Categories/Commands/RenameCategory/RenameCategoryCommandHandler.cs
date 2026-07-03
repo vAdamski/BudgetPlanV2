@@ -9,25 +9,25 @@ namespace BudgetPlan.Application.Actions.Categories.Commands.RenameCategory;
 
 public class RenameCategoryCommandHandler(
     ICurrentUserService currentUserService,
-    IAggregateRepository aggregateRepository) : ICommandHandler<RenameCategoryCommand, Guid>
+    IAggregateRepository aggregateRepository) : ICommandHandler<RenameCategoryCommand, RenameCategoryResult>
 {
-    public async Task<Result<Guid>> Handle(RenameCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result<RenameCategoryResult>> Handle(RenameCategoryCommand request, CancellationToken cancellationToken)
     {
         var category = await aggregateRepository.TryLoadAsync<Category>(request.Id, null, cancellationToken);
 
         if (category == null)
-            return Result.Failure<Guid>(ApplicationErrors.Category.CategoryNotFound());
+            return Result.Failure<RenameCategoryResult>(ApplicationErrors.Category.CategoryNotFound());
 
         if (category.UserId != currentUserService.UserId)
-            return Result.Failure<Guid>(ApplicationErrors.Category.CategoryAccessDenied());
+            return Result.Failure<RenameCategoryResult>(ApplicationErrors.Category.CategoryAccessDenied());
 
         var renameResult = category.Rename(request.Name);
 
         if (renameResult.IsFailure)
-            return Result.Failure<Guid>(renameResult.Error);
+            return Result.Failure<RenameCategoryResult>(renameResult.Error);
 
         await aggregateRepository.StoreAsync(category, cancellationToken);
 
-        return Result.Success(category.Id);
+        return Result.Success(new RenameCategoryResult(category.Id));
     }
 }

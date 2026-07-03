@@ -5,15 +5,13 @@ using BudgetPlan.Domain.Common.Abstractions.Messaging;
 namespace BudgetPlan.Application.Actions.HealthActions.Queries.CheckHealth;
 
 public sealed class CheckHealthQueryHandler(IDatabaseHealthCheck databaseHealthCheck)
-	: IQueryHandler<CheckHealthQuery, HealthViewModel>
+	: IQueryHandler<CheckHealthQuery, CheckHealthResult>
 {
-	public async Task<Result<HealthViewModel>> Handle(CheckHealthQuery request, CancellationToken cancellationToken)
+	public async Task<Result<CheckHealthResult>> Handle(CheckHealthQuery request, CancellationToken cancellationToken)
 	{
-		var result = new HealthViewModel
-		{
-			ApiStatus = true,
-			DatabaseStatus = await databaseHealthCheck.CanConnectAsync(cancellationToken)
-		};
+		var result = new CheckHealthResult(
+			true,
+			await databaseHealthCheck.CanConnectAsync(cancellationToken));
 
 		return Result.Success(result);
 	}

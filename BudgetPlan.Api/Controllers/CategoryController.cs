@@ -1,14 +1,12 @@
-using BudgetPlan.Api.Common.ContractMappers.Auth;
 using BudgetPlan.Api.Common.ContractMappers.Category;
 using BudgetPlan.Application.Actions.Categories.Commands.CreateCategory;
-using BudgetPlan.Application.Actions.Categories.Commands.CreateSubcategory;
 using BudgetPlan.Application.Actions.Categories.Commands.DeleteCategory;
 using BudgetPlan.Application.Actions.Categories.Commands.DeleteSubcategory;
-using BudgetPlan.Application.Actions.Categories.Commands.RenameCategory;
-using BudgetPlan.Application.Actions.Categories.Commands.RenameSubcategory;
 using BudgetPlan.Application.Actions.Categories.Queries.GetCategories;
-using BudgetPlan.Contracts.ControllerContracts.Category;
 using BudgetPlan.Contracts.ControllerContracts.Category.CreateCategory;
+using BudgetPlan.Contracts.ControllerContracts.Category.CreateSubcategory;
+using BudgetPlan.Contracts.ControllerContracts.Category.RenameCategory;
+using BudgetPlan.Contracts.ControllerContracts.Category.RenameSubcategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,48 +48,44 @@ public sealed class CategoryController(ISender sender) : BaseController(sender)
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> RenameCategory(
         Guid id,
-        [FromBody] RenameCategoryCommand command,
+        [FromBody] RenameCategoryRequest request,
         CancellationToken cancellationToken)
     {
-        command.Id = id;
-
-        var result = await Sender.Send(command, cancellationToken);
+        var result = await Sender.Send(request.ToCommand(id), cancellationToken);
         return result.IsSuccess ? NoContent() : HandleFailure(result);
     }
     
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> DeleteCategory(Guid id, CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(new DeleteCategoryCommand { Id = id }, cancellationToken);
+        var result = await Sender.Send(new DeleteCategoryCommand(id), cancellationToken);
         return result.IsSuccess ? NoContent() : HandleFailure(result);
     }
     
     [HttpPost("{categoryId:guid}/subcategories")]
     public async Task<IActionResult> CreateSubcategory(
         Guid categoryId,
-        [FromBody] CreateSubcategoryCommand command,
+        [FromBody] CreateSubcategoryRequest request,
         CancellationToken cancellationToken)
     {
-        command.CategoryId = categoryId;
+        var result = await Sender.Send(request.ToCommand(categoryId), cancellationToken);
 
-        var result = await Sender.Send(command, cancellationToken);
+        if (!result.IsSuccess)
+            return HandleFailure(result);
 
-        return result.IsSuccess
-            ? Created($"/api/categories/{categoryId}/subcategories/{result.Value}", result.Value)
-            : HandleFailure(result);
+        var response = result.Value.ToResponse();
+
+        return Created($"/api/categories/{categoryId}/subcategories/{response.Id}", response);
     }
     
     [HttpPut("{categoryId:guid}/subcategories/{subcategoryId:guid}")]
     public async Task<IActionResult> RenameSubcategory(
         Guid categoryId,
         Guid subcategoryId,
-        [FromBody] RenameSubcategoryCommand command,
+        [FromBody] RenameSubcategoryRequest request,
         CancellationToken cancellationToken)
     {
-        command.CategoryId = categoryId;
-        command.SubcategoryId = subcategoryId;
-
-        var result = await Sender.Send(command, cancellationToken);
+        var result = await Sender.Send(request.ToCommand(categoryId, subcategoryId), cancellationToken);
         return result.IsSuccess ? NoContent() : HandleFailure(result);
     }
     
@@ -102,11 +96,7 @@ public sealed class CategoryController(ISender sender) : BaseController(sender)
         CancellationToken cancellationToken)
     {
         var result = await Sender.Send(
-            new DeleteSubcategoryCommand
-            {
-                CategoryId = categoryId,
-                SubcategoryId = subcategoryId
-            },
+            new DeleteSubcategoryCommand(categoryId, subcategoryId),
             cancellationToken);
 
         return result.IsSuccess ? NoContent() : HandleFailure(result);

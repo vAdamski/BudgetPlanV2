@@ -1,0 +1,3 @@
+namespace BudgetPlan.Contracts.ControllerContracts.FinancialEntries.GetFinancialEntries;
+
+public sealed record GetFinancialEntriesResponse(IReadOnlyList<FinancialEntryResponse> FinancialEntries);

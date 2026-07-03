@@ -8,9 +8,9 @@ namespace BudgetPlan.Application.Actions.SettlementPeriods.Queries.GetSettlement
 public sealed class GetSettlementPeriodsQueryHandler(
     ISettlementPeriodReadRepository settlementPeriodReadRepository,
     ICurrentUserService currentUserService)
-    : IQueryHandler<GetSettlementPeriodsQuery, GetSettlementPeriodsResponse>
+    : IQueryHandler<GetSettlementPeriodsQuery, GetSettlementPeriodsResult>
 {
-    public async Task<Result<GetSettlementPeriodsResponse>> Handle(
+    public async Task<Result<GetSettlementPeriodsResult>> Handle(
         GetSettlementPeriodsQuery request,
         CancellationToken cancellationToken)
     {
@@ -27,6 +27,6 @@ public sealed class GetSettlementPeriodsQueryHandler(
                 x.EndDate))
             .ToList();
 
-        return Result.Success(new GetSettlementPeriodsResponse(dtos));
+        return Result.Success(new GetSettlementPeriodsResult(dtos));
     }
 }
