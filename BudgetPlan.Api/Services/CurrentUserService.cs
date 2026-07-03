@@ -1,7 +1,6 @@
 using System.Security.Claims;
 using BudgetPlan.Application.Common.Interfaces.Api.Services;
 using BudgetPlan.Domain.Entities;
-using BudgetPlan.Persistence.Factories;
 using Microsoft.AspNetCore.Identity;
 
 namespace BudgetPlan.Api.Services;

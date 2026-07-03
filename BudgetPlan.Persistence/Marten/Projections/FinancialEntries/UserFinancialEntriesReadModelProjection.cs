@@ -1,7 +1,5 @@
-using BudgetPlan.Domain.Enums;
 using BudgetPlan.Domain.Events;
 using Marten.Events.Aggregation;
-using Marten.Events.Projections;
 
 namespace BudgetPlan.Persistence.Marten.Projections.FinancialEntries;
 

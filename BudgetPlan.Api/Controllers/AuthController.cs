@@ -1,6 +1,5 @@
 using BudgetPlan.Api.Common.ContractMappers.Auth;
 using BudgetPlan.Application.Actions.UserAccountManager.Queries.GetCurentUser;
-using BudgetPlan.Application.Common.Interfaces.Api.Services;
 using BudgetPlan.Contracts.ControllerContracts.Auth.CurrentUser;
 using BudgetPlan.Contracts.ControllerContracts.Auth.RegisterUser;
 using BudgetPlan.Domain.Entities;

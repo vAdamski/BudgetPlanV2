@@ -1,4 +1,3 @@
-using BudgetPlan.Domain.Common;
 using MediatR;
 
 namespace BudgetPlan.Domain.Common.Abstractions.Messaging;

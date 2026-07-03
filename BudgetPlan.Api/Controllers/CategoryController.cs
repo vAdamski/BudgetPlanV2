@@ -1,5 +1,4 @@
 using BudgetPlan.Api.Common.ContractMappers.Category;
-using BudgetPlan.Application.Actions.Categories.Commands.CreateCategory;
 using BudgetPlan.Application.Actions.Categories.Commands.DeleteCategory;
 using BudgetPlan.Application.Actions.Categories.Commands.DeleteSubcategory;
 using BudgetPlan.Application.Actions.Categories.Queries.GetCategories;
