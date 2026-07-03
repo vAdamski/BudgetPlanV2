@@ -1,3 +1,5 @@
+using BudgetPlan.Api.Common.ContractMappers.Auth;
+using BudgetPlan.Api.Common.ContractMappers.Category;
 using BudgetPlan.Application.Actions.Categories.Commands.CreateCategory;
 using BudgetPlan.Application.Actions.Categories.Commands.CreateSubcategory;
 using BudgetPlan.Application.Actions.Categories.Commands.DeleteCategory;
@@ -5,6 +7,7 @@ using BudgetPlan.Application.Actions.Categories.Commands.DeleteSubcategory;
 using BudgetPlan.Application.Actions.Categories.Commands.RenameCategory;
 using BudgetPlan.Application.Actions.Categories.Commands.RenameSubcategory;
 using BudgetPlan.Application.Actions.Categories.Queries.GetCategories;
+using BudgetPlan.Contracts.ControllerContracts.Category;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,19 +20,30 @@ public sealed class CategoryController(ISender sender) : BaseController(sender)
     public async Task<IActionResult> GetCategories(CancellationToken cancellationToken)
     {
         var result = await Sender.Send(new GetCategoriesQuery(), cancellationToken);
-        return result.IsSuccess ? Ok(result.Value) : HandleFailure(result);
+        
+        if (!result.IsSuccess)
+            return HandleFailure(result);
+        
+        var response = result.Value.ToResponse();
+        
+        return Ok(response);
     }
     
     [HttpPost]
     public async Task<IActionResult> CreateCategory(
-        [FromBody] CreateCategoryCommand command,
+        [FromBody] CreateCategoryRequest request,
         CancellationToken cancellationToken)
     {
-        var result = await Sender.Send(command, cancellationToken);
-
-        return result.IsSuccess
-            ? Created($"/api/categories/{result.Value}", result.Value)
-            : HandleFailure(result);
+        var query = request.ToCommand();
+        
+        var result = await Sender.Send(query, cancellationToken);
+        
+        if (!result.IsSuccess)
+            return HandleFailure(result);
+        
+        var response = result.Value.ToResponse();
+        
+        return Created($"/api/categories/{response.Id}", response);
     }
     
     [HttpPut("{id:guid}")]

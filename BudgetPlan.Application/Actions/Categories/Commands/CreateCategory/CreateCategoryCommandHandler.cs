@@ -8,17 +8,17 @@ namespace BudgetPlan.Application.Actions.Categories.Commands.CreateCategory;
 
 public class CreateCategoryCommandHandler(
     ICurrentUserService currentUserService,
-    IAggregateRepository aggregateRepository) : ICommandHandler<CreateCategoryCommand, Guid>
+    IAggregateRepository aggregateRepository) : ICommandHandler<CreateCategoryCommand, CreateCategoryResult>
 {
-    public async Task<Result<Guid>> Handle(CreateCategoryCommand command, CancellationToken cancellationToken)
+    public async Task<Result<CreateCategoryResult>> Handle(CreateCategoryCommand command, CancellationToken cancellationToken)
     {
         var category = Category.Create(currentUserService.UserId, command.Name, command.Type);
         
         if (category.IsFailure)
-            return Result.Failure<Guid>(category.Error);
+            return Result.Failure<CreateCategoryResult>(category.Error);
         
         await aggregateRepository.StoreAsync(category.Value, cancellationToken);
         
-        return Result.Success(category.Value.Id);
+        return Result.Success(new CreateCategoryResult(category.Value.Id));
     }
 }

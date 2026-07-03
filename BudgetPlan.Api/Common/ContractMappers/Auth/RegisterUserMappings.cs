@@ -14,8 +14,8 @@ internal static class RegisterUserMappings
             request.DisplayName);
     }
 
-    public static RegisterUserResponse ToResponse(this Guid userId)
+    public static RegisterUserResponse ToResponse(this RegisterUserResult result)
     {
-        return new RegisterUserResponse(userId);
+        return new RegisterUserResponse(result.UserId);
     }
 }

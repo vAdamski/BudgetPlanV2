@@ -3,6 +3,6 @@ using BudgetPlan.Domain.Common.Abstractions.Messaging;
 
 namespace BudgetPlan.Application.Actions.Categories.Queries.GetCategories;
 
-public class GetCategoriesQuery : IQuery<GetCategoriesResponse>
+public class GetCategoriesQuery : IQuery<GetCategoriesResult>
 {
 }

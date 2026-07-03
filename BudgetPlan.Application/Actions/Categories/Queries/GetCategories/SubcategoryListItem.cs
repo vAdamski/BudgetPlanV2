@@ -1,3 +1,3 @@
 namespace BudgetPlan.Application.Actions.Categories.Queries.GetCategories;
 
-public record GetCategoriesResponse(List<CategoryDto> Categories);
+public record SubcategoryListItem(Guid Id, string Name);

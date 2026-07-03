@@ -12,9 +12,9 @@ public sealed class RegisterUserCommandHandler(
     RoleManager<IdentityRole<Guid>> roleManager,
     UserManager<ApplicationUser> userManager,
     IAggregateRepository aggregateRepository)
-    : ICommandHandler<RegisterUserCommand, Guid>
+    : ICommandHandler<RegisterUserCommand, RegisterUserResult>
 {
-    public async Task<Result<Guid>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<RegisterUserResult>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
         var userRole = await roleManager.CreateAsync(new IdentityRole<Guid>
         {
@@ -25,7 +25,7 @@ public sealed class RegisterUserCommandHandler(
         
         if (!userRole.Succeeded)
         {
-            return Result.Failure<Guid>(ApplicationErrors.User.ErrorWhileRegisteringUser());
+            return Result.Failure<RegisterUserResult>(ApplicationErrors.User.ErrorWhileRegisteringUser());
         }
         
         var user = new ApplicationUser
@@ -40,7 +40,7 @@ public sealed class RegisterUserCommandHandler(
         
         if (!result.Succeeded)
         {
-            return Result.Failure<Guid>(ApplicationErrors.User.ErrorWhileRegisteringUser());
+            return Result.Failure<RegisterUserResult>(ApplicationErrors.User.ErrorWhileRegisteringUser());
         }
         
         if (!await userManager.IsInRoleAsync(user, "User"))
@@ -48,7 +48,7 @@ public sealed class RegisterUserCommandHandler(
             var addToRoleResult = await userManager.AddToRoleAsync(user, "User");
             if (!addToRoleResult.Succeeded)
             {
-                return Result.Failure<Guid>(ApplicationErrors.User.ErrorWhileRegisteringUser());
+                return Result.Failure<RegisterUserResult>(ApplicationErrors.User.ErrorWhileRegisteringUser());
             }
         }
 
@@ -56,6 +56,6 @@ public sealed class RegisterUserCommandHandler(
 
         await aggregateRepository.StoreAsync(userAccount, cancellationToken);
 
-        return Result.Success(user.Id);
+        return Result.Success(new RegisterUserResult(user.Id));
     }
 }
