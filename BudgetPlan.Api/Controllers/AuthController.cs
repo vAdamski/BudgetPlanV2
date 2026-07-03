@@ -1,7 +1,8 @@
 using BudgetPlan.Api.Common.ContractMappers.Auth;
-using BudgetPlan.Application.Actions.UserAccountManager.Register;
+using BudgetPlan.Application.Actions.UserAccountManager.Queries.GetCurentUser;
 using BudgetPlan.Application.Common.Interfaces.Api.Services;
-using BudgetPlan.Contracts.ControllerContracts.Auth;
+using BudgetPlan.Contracts.ControllerContracts.Auth.CurrentUser;
+using BudgetPlan.Contracts.ControllerContracts.Auth.RegisterUser;
 using BudgetPlan.Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,30 +16,21 @@ namespace BudgetPlan.Api.Controllers;
 [Tags("Auth")]
 [Produces("application/json")]
 public sealed class AuthController(
-    ISender sender,
-    ICurrentUserService currentUserService)
+    ISender sender)
     : BaseController(sender)
 {
     [HttpGet("me")]
     [Authorize]
     [ProducesResponseType<CurrentUserResponse>(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public async Task<IActionResult> Me([FromServices] UserManager<ApplicationUser> userManager)
+    public async Task<IActionResult> Me()
     {
-        var applicationUser =
-            await userManager.GetUserAsync(User);
+        var result = await Sender.Send(new GetCurrentUserQuery(), HttpContext.RequestAborted);
 
-        if (applicationUser is null)
-            return Unauthorized();
+        if (result.IsFailure)
+            return HandleFailure(result);
 
-        var roles =
-            await userManager.GetRolesAsync(applicationUser);
-
-        return Ok(new CurrentUserResponse(
-            applicationUser.Id,
-            applicationUser.Email!,
-            applicationUser.DisplayName,
-            roles.ToArray()));
+        return Ok(result.Value.ToResponse());
     }
 
     [HttpPost("register")]

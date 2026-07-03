@@ -1,6 +1,7 @@
 ﻿using BudgetPlan.Api.Common.ContractMappers.Enums;
 using BudgetPlan.Application.Actions.Categories.Commands.CreateCategory;
 using BudgetPlan.Contracts.ControllerContracts.Category;
+using BudgetPlan.Contracts.ControllerContracts.Category.CreateCategory;
 
 namespace BudgetPlan.Api.Common.ContractMappers.Category;
 

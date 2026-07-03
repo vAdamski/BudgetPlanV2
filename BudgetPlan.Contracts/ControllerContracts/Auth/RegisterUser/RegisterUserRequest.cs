@@ -1,4 +1,4 @@
-﻿namespace BudgetPlan.Contracts.ControllerContracts.Auth;
+﻿namespace BudgetPlan.Contracts.ControllerContracts.Auth.RegisterUser;
 
 public sealed record RegisterUserRequest(
     string Email,

@@ -1,5 +1,6 @@
 ﻿using BudgetPlan.Application.Actions.Categories.Queries.GetCategories;
 using BudgetPlan.Contracts.ControllerContracts.Category;
+using BudgetPlan.Contracts.ControllerContracts.Category.GetCategories;
 
 namespace BudgetPlan.Api.Common.ContractMappers.Category;
 

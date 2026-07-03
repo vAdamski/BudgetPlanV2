@@ -6,7 +6,7 @@ using BudgetPlan.Domain.Entities;
 using BudgetPlan.Domain.Errors;
 using Microsoft.AspNetCore.Identity;
 
-namespace BudgetPlan.Application.Actions.UserAccountManager.Register;
+namespace BudgetPlan.Application.Actions.UserAccountManager.Commands.Register;
 
 public sealed class RegisterUserCommandHandler(
     RoleManager<IdentityRole<Guid>> roleManager,

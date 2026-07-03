@@ -8,6 +8,7 @@ using BudgetPlan.Application.Actions.Categories.Commands.RenameCategory;
 using BudgetPlan.Application.Actions.Categories.Commands.RenameSubcategory;
 using BudgetPlan.Application.Actions.Categories.Queries.GetCategories;
 using BudgetPlan.Contracts.ControllerContracts.Category;
+using BudgetPlan.Contracts.ControllerContracts.Category.CreateCategory;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
